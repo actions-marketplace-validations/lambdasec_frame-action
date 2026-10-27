@@ -34,7 +34,7 @@ runs:
   using: composite
   steps:
     - id: frame
-      uses: lambdasec/frame@79121259000d3ce2caef9a06b91f54f53369c893
+      uses: lambdasec/frame@v1.0.0
       with:
         path: ${{ inputs.path }}
         fail-on: ${{ inputs.fail-on }}
