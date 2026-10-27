@@ -1,0 +1,44 @@
+name: Frame Security Scan
+description: Find vulnerabilities by following attacker data across files, with solver-checked paths. Uploads SARIF to code scanning.
+author: lambdasec
+branding:
+  icon: shield
+  color: blue
+inputs:
+  path:
+    description: Directory or file to scan.
+    default: .
+  fail-on:
+    description: Fail the job on findings at or above this severity (critical, high, medium, low, any, none).
+    default: high
+  args:
+    description: Extra arguments for `frame scan`, e.g. `--changed origin/main --baseline .frame-baseline.json`.
+    default: ""
+  sarif-file:
+    description: Where to write the SARIF report.
+    default: frame.sarif
+  upload-sarif:
+    description: Upload the SARIF report to GitHub code scanning (needs `security-events write`).
+    default: "true"
+  python-version:
+    description: Python used to run Frame (3.10 or later).
+    default: "3.12"
+outputs:
+  sarif-file:
+    description: Path of the SARIF report.
+    value: ${{ steps.frame.outputs.sarif-file }}
+  exit-code:
+    description: 0 clean, 1 findings at or above fail-on, 2 the scan could not run.
+    value: ${{ steps.frame.outputs.exit-code }}
+runs:
+  using: composite
+  steps:
+    - id: frame
+      uses: lambdasec/frame@79121259000d3ce2caef9a06b91f54f53369c893
+      with:
+        path: ${{ inputs.path }}
+        fail-on: ${{ inputs.fail-on }}
+        args: ${{ inputs.args }}
+        sarif-file: ${{ inputs.sarif-file }}
+        upload-sarif: ${{ inputs.upload-sarif }}
+        python-version: ${{ inputs.python-version }}
